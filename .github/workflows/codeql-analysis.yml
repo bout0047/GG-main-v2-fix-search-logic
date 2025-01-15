@@ -1,0 +1,36 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: [ "main", "master" ]  # Run on push to main/master
+  pull_request:
+    branches: [ "main", "master" ]  # Run on PR to main/master
+  schedule:
+    - cron: '0 0 * * *'  # Optional: Run daily at midnight
+
+jobs:
+  analyze:
+    name: Analyze Code
+    runs-on: ubuntu-latest  # Use GitHub-hosted runners
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # Required for uploading CodeQL results
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript', 'python' ]  # Specify the languages to analyze
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Checkout the code
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}  # Use the languages specified above
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
